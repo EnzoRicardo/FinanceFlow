@@ -1,0 +1,264 @@
+body {
+    background-color: #ffff;
+    overflow: hidden;
+}
+
+.login{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+
+.login-container{
+  width: min(1100px, 100%);
+  min-height: 640px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.right{
+  padding: 50px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+
+  align-self: start;      /* sobe a section */
+  margin-top: -40px;      /* ajuste fino vertical */
+
+  margin-left: -50px;      /* empurra para direita */
+}
+
+.top{
+  position: relative;
+  height: 360px; 
+  margin-top: -80px;
+}
+
+.card{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 580px;
+  max-width: 90%;
+  z-index: 2;
+}
+
+.shadow{
+  position: absolute;
+  left: 80px;
+  top: 5px;
+  width: 560px;
+  max-width: 95%;
+  z-index: 1;
+  opacity: 0.4;
+  filter: blur(12px);
+  transform: translateZ(0); 
+}
+
+.bottom{
+  text-align: center;   
+  align-self: center; 
+  margin-top: 170px;
+}
+
+.title-gray{
+  font-weight: 300;
+  color: #9a9a9a;
+  font-size: 44px;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.title-black{
+  font-weight: 300;
+  color: #111;
+  font-size: 44px;
+  line-height: 1.05;
+  margin: 8px 0 0 0;
+}
+
+
+.left{
+  padding: 60px 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(20%) translateY(-10%);
+}
+
+.logo{
+  width: 280px;
+  max-width: 80%;
+  margin-top: 10px;
+  margin-bottom: 44px;
+}
+
+.form{
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.input{
+  height: 52px;
+  border-radius: 999px;
+  border: 2px solid #111;
+  padding: 0 22px;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.input::placeholder{
+  color: #222;
+}
+
+.input:focus{
+  transform: scale(1.03);
+}
+
+.btn{
+  height: 45px;
+  border-radius: 999px;
+  border: none;
+  background: #000;
+  color: #fff;
+  width: 60%;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 6px;
+  margin: 6px auto 0;
+  transition: 0.3s ease;
+}
+
+.btn:hover{
+  transform: scale(1.03);
+}
+
+.register{
+  margin: 10px 0 0;
+  font-size: 18px;
+  color: #222;
+  text-align: center;
+}
+
+.register-link{
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.register-link:hover{
+  text-decoration: underline;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.1;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Caixa (modal) */
+.ff-popup {
+  width: 520px;
+  border-radius: 18px;
+  padding: 26px 26px 20px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.25);
+  background-color: rgba(0, 0, 0, 0.21);
+  backdrop-filter: blur(12px) ;
+  color: #fff;
+}
+
+
+.swal2-success-circular-line-left,
+.swal2-success-circular-line-right,
+.swal2-success-fix {
+  display: none;
+}
+
+/* Título */
+.ff-title {
+  font-size: 28px;
+  font-weight: 500;
+  font-family: 'Montserrat';
+  margin: 8px 0 6px;
+}
+
+/* Texto */
+.ff-text {
+  font-size: 17px;
+  font-family: 'Montserrat';
+  color: #ffffff;
+}
+
+/* Botão (sem estilo padrão do sweetalert) */
+.ff-confirm {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 0;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Montserrat';
+  background: #000000;
+  color: #ffffff;
+  transition: transform .06s ease, opacity .2s ease;
+}
+
+.ff-confirm:hover { opacity: .92; }
+.ff-confirm:active { transform: translateY(1px); }
+
+
+
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .login {
+    padding: 18px;
+  }
+
+  .login-container {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    width: 100%;
+  }
+
+  .right {
+    display: none;
+  }
+
+  .left {
+    padding: 24px 18px ;
+    align-items: center;
+    transform: none;
+    margin-top: -50px;
+  }
+
+  .logo {
+    width: 220px;
+    margin: 0 0 28px;
+  }
+
+  .form {
+    max-width: 360px;
+  }
+
+  .btn {
+    width: 70%;
+  }
+}

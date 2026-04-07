@@ -1,0 +1,6 @@
+.expenseInsightCard {
+  grid-column: span 1;
+  height: 300px;
+  background-color: #3E3E3E;
+  border-radius: 15px;
+}

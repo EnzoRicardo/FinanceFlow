@@ -1,0 +1,19 @@
+.home-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #1C1C1C;
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  column-gap: 2px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.home-left {
+  display: flex;
+}
+
+.home-mid-categories {
+  display: flex;
+  width: 100%;
+}

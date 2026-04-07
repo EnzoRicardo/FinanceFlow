@@ -1,0 +1,58 @@
+.dashboardHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4px 16px 4px;
+  box-sizing: border-box;
+}
+
+.dashboardGreeting {
+  font-size: 22px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+}
+
+.monthButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+
+  cursor: pointer;
+  opacity: 0.9;
+
+  transition: 0.2s ease;
+}
+
+.monthButton:hover {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.calendarIcon {
+  font-size: 16px;
+}
+
+.monthNavigator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.monthDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 22px;
+  min-width: 150px;
+  justify-content: center;
+}
