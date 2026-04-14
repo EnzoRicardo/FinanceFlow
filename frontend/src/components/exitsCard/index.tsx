@@ -139,7 +139,7 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
               onChange={(e) => setCategory(e.target.value)}
             >
               <option value="">Selecione uma categoria</option>
-              {exitsCategories.map((item) => (
+              {exitCategories.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>

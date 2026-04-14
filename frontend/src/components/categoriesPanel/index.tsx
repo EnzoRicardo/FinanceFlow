@@ -1,17 +1,17 @@
 import { useState } from "react";
 import "./categoriesPanel.css"
 
-type CategoryType = "income" | "expense";
-type PresetType = "personal" | "business" | "custom";
+export type CategoryType = "income" | "expense";
+export type PresetType = "personal" | "business" | "custom";
 
-type Category = {
+export type Category = {
     id: string;
     name: string;
     type: CategoryType;
     isDefault: boolean;
 }
 
-const personalIncomeCategories: Category[] = [
+export const personalIncomeCategories: Category[] = [
   { id: "pi-1", name: "Salário", type: "income", isDefault: true },
   { id: "pi-2", name: "Dividendos", type: "income", isDefault: true },
   { id: "pi-3", name: "Investimentos", type: "income", isDefault: true },
@@ -19,7 +19,7 @@ const personalIncomeCategories: Category[] = [
   { id: "pi-5", name: "Outros", type: "income", isDefault: true },
 ];
 
-const personalExpenseCategories: Category[] = [
+export const personalExpenseCategories: Category[] = [
   { id: "pe-1", name: "Moradia", type: "expense", isDefault: true },
   { id: "pe-2", name: "Alimentação", type: "expense", isDefault: true },
   { id: "pe-3", name: "Transporte", type: "expense", isDefault: true },
@@ -28,7 +28,7 @@ const personalExpenseCategories: Category[] = [
   { id: "pe-6", name: "Outros", type: "expense", isDefault: true },
 ];
 
-const businessIncomeCategories: Category[] = [
+export const businessIncomeCategories: Category[] = [
   { id: "bi-1", name: "Vendas", type: "income", isDefault: true },
   { id: "bi-2", name: "Serviços", type: "income", isDefault: true },
   { id: "bi-3", name: "Reembolsos", type: "income", isDefault: true },
@@ -36,7 +36,7 @@ const businessIncomeCategories: Category[] = [
   { id: "bi-5", name: "Outros", type: "income", isDefault: true },
 ];
 
-const businessExpenseCategories: Category[] = [
+export const businessExpenseCategories: Category[] = [
   { id: "be-1", name: "Mercadoria", type: "expense", isDefault: true },
   { id: "be-2", name: "Fornecedores", type: "expense", isDefault: true },
   { id: "be-3", name: "Transporte", type: "expense", isDefault: true },
@@ -45,7 +45,7 @@ const businessExpenseCategories: Category[] = [
   { id: "be-6", name: "Outros", type: "expense", isDefault: true },
 ];
 
-function buildPresetCategories(preset: PresetType): Category[] {
+export function buildPresetCategories(preset: PresetType): Category[] {
     if (preset === "personal") {
         return [...personalIncomeCategories, ...personalExpenseCategories];
     }
