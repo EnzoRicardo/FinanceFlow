@@ -28,6 +28,12 @@
   line-height: 1.5;
 }
 
+.categoriesError {
+  margin: 12px 0 0 0;
+  color: #ff8a80;
+  font-size: 0.95rem;
+}
+
 .presetSection {
   margin-bottom: 32px;
 }

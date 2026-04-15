@@ -18,11 +18,34 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
   const [category, setCategory] = useState("");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [exitCategories, setExitCategories] = useState<string []>([]);
+  const [exitCategories, setExitCategories] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+
+  async function loadExpenseCategories() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const q = query(
+      collection(db, "categories"),
+      where("userId", "==", user.uid),
+      where("type", "==", "expense"),
+    );
+
+    const snapshot = await getDocs(q);
+    const list = snapshot.docs
+      .map((d) => ({
+        id: d.id,
+        name: String(d.data().name ?? "").trim(),
+      }))
+      .filter((c) => c.name.length > 0);
+    setExitCategories(list);
+  }
 
   function openModal() {
     setIsModalOpen(true);
     setError("");
+    void loadExpenseCategories();
   }
 
   function closeModal() {
@@ -140,8 +163,8 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
             >
               <option value="">Selecione uma categoria</option>
               {exitCategories.map((item) => (
-                <option key={item} value={item}>
-                  {item}
+                <option key={item.id} value={item.name}>
+                  {item.name}
                 </option>
               ))}
             </select>
