@@ -1,35 +1,59 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { DEFAULT_CATEGORIES } from "../../constants/defaultCategories";
 import "./income.css";
 
 const BrazilianCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+  style: "currency",
+  currency: "BRL",
 });
 
 type IncomeCardProps = {
-  selectedMonth : Date;
+  selectedMonth: Date;
 };
 
-export default function IncomeCard({selectedMonth}: IncomeCardProps) {
+export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
   const [totalIncome, setTotalIncome] = useState(0);
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activePreset, setActivePreset] = useState<"personal" | "business">(
+    "personal"
+  );
+  const [incomeCategories, setIncomeCategories] = useState<
+    { id: string; name: string }[]
+  >([]);
 
-  const incomeCategories = [
-    "Salário",
-    "Dividendos",
-    "Investimentos",
-    "Presentes",
-    "Outros"
-  ]
+  async function loadUserPreset() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (snap.exists()) {
+      const preset = snap.data().categoryPreset;
+
+      if (preset === "personal" || preset === "business") {
+        setActivePreset(preset);
+      }
+    }
+  }
 
   function openModal() {
     setIsModalOpen(true);
     setError("");
+    void loadUserPreset();
+    void loadIncomeCategories();
   }
 
   function closeModal() {
@@ -38,101 +62,131 @@ export default function IncomeCard({selectedMonth}: IncomeCardProps) {
     setCategory("");
     setError("");
   }
-  
+
   async function addTransaction() {
-      const user = auth.currentUser;
-      if (!user) return;
+    const user = auth.currentUser;
+    if (!user) return;
 
-      if (!amount || Number(amount) <= 0) {
-        console.error("Valor inválido");
-        setError("Valor inválido");
-        return;
-      }
+    if (!amount || Number(amount) <= 0) {
+      setError("Valor inválido");
+      return;
+    }
 
-      if (!category.trim()) {
-        console.error("Categoria obrigatória");
-        setError("Categoria obrigatória");
-        return;
-      }
+    if (!category.trim()) {
+      setError("Categoria obrigatória");
+      return;
+    }
 
-      const newTransaction = {
-        userId: user.uid,
-        type: "income",
-        amount: Number(amount),
-        category: category.trim(),
-        createdAt: new Date(),
-      };
+    const newTransaction = {
+      userId: user.uid,
+      type: "income",
+      amount: Number(amount),
+      category: category.trim(),
+      createdAt: new Date(),
+    };
 
-
-      try {
-        await addDoc(collection(db, "transactions"), newTransaction);
-        setError("");
-        await loadIncome();
-        closeModal();
-      } catch (err) {
-        setError("Erro ao adicionar receita");
-        console.error(err);
-      }
+    try {
+      await addDoc(collection(db, "transactions"), newTransaction);
+      setError("");
+      await loadIncome();
+      closeModal();
+    } catch (err) {
+      setError("Erro ao adicionar receita");
+      console.error(err);
+    }
   }
 
   async function loadIncome() {
-      const user = auth.currentUser;
-      if (!user) return;
-      
-      const startOfMonth = new Date(
-        selectedMonth.getFullYear(),
-        selectedMonth.getMonth(),
-        1
-      )
+    const user = auth.currentUser;
+    if (!user) return;
 
-      const startOfNextMonth = new Date(
-        selectedMonth.getFullYear(),
-        selectedMonth.getMonth() + 1,
-        1
-      )
+    const startOfMonth = new Date(
+      selectedMonth.getFullYear(),
+      selectedMonth.getMonth(),
+      1
+    );
 
-      const q = query(
-        collection(db, "transactions"),
-        where("userId", "==", user.uid),
-        where("type", "==", "income"),
-        where("createdAt", ">=", startOfMonth),
-        where("createdAt", "<", startOfNextMonth)
-      )
+    const startOfNextMonth = new Date(
+      selectedMonth.getFullYear(),
+      selectedMonth.getMonth() + 1,
+      1
+    );
 
-      const snapshot = await getDocs(q);
+    const q = query(
+      collection(db, "transactions"),
+      where("userId", "==", user.uid),
+      where("type", "==", "income"),
+      where("createdAt", ">=", startOfMonth),
+      where("createdAt", "<", startOfNextMonth)
+    );
 
-      let sum = 0;
+    const snapshot = await getDocs(q);
 
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        const value = Number(data.amount) || 0;
-        sum += value;
-      })
+    let sum = 0;
 
-      setTotalIncome(sum);
+    snapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      const value = Number(data.amount) || 0;
+      sum += value;
+    });
+
+    setTotalIncome(sum);
+  }
+
+  async function loadIncomeCategories() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const q = query(
+      collection(db, "categories"),
+      where("userId", "==", user.uid),
+      where("type", "==", "income")
+    );
+
+    const snapshot = await getDocs(q);
+
+    const list = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        name: String(doc.data().name ?? "").trim(),
+      }))
+      .filter((c) => c.name.length > 0);
+
+    setIncomeCategories(list);
   }
 
   useEffect(() => {
-    loadIncome();
+    void loadIncome();
   }, [selectedMonth]);
+
+  const defaultIncomeCategories = DEFAULT_CATEGORIES[activePreset].income;
+
+  const finalIncomeCategories = [
+    ...new Set([
+      ...defaultIncomeCategories,
+      ...incomeCategories.map((c) => c.name),
+    ]),
+  ];
 
   return (
     <>
-    <div className="incomeCard">
-      <h3 className="titleIncome">Receita</h3>
-      <p className="totalIncome">{BrazilianCurrencyFormatter.format(totalIncome)}</p>
+      <div className="incomeCard">
+        <h3 className="titleIncome">Receita</h3>
+        <p className="totalIncome">
+          {BrazilianCurrencyFormatter.format(totalIncome)}
+        </p>
 
-      <button className="incomeButton" onClick={openModal}>
-        Adicionar
-      </button>
-    </div>
+        <button className="incomeButton" onClick={openModal}>
+          Adicionar
+        </button>
+      </div>
 
-    {isModalOpen && (
-      <div className="modalOverlay">
-        <div className="incomeModal">
-          <h3 className="modalTitle">Registrar entrada</h3>
+      {isModalOpen && (
+        <div className="modalOverlay">
+          <div className="incomeModal">
+            <h3 className="modalTitle">Registrar entrada</h3>
 
-           <input
+            <input
               type="number"
               placeholder="Valor"
               className="incomeInput"
@@ -146,22 +200,26 @@ export default function IncomeCard({selectedMonth}: IncomeCardProps) {
               onChange={(e) => setCategory(e.target.value)}
             >
               <option value="">Selecione uma categoria</option>
-              {incomeCategories.map((item) => (
+              {finalIncomeCategories.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
               ))}
             </select>
 
-          {error && <p className="incomeError">{error}</p>}
+            {error && <p className="incomeError">{error}</p>}
 
-          <div className="modalActions">
-            <button className="modalBtn" onClick={addTransaction}>Salvar</button>
-            <button className="modalBtn" onClick={closeModal}>Cancelar</button>
+            <div className="modalActions">
+              <button className="modalBtn" onClick={addTransaction}>
+                Salvar
+              </button>
+              <button className="modalBtn" onClick={closeModal}>
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
     </>
   );
 }

@@ -133,9 +133,9 @@ const sideBar = () => {
                         <span>Dashboard</span>
                     </li>
 
-                    <li onClick={() => handleGo("/transactions")}>
+                    <li onClick={() => handleGo("/statement")}>
                         <FontAwesomeIcon icon={faMoneyBillWave} />
-                        <span>Transações</span>
+                        <span>Extrato</span>
                     </li>
 
                     <li onClick={() => handleGo("/reports")}>

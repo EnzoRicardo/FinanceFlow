@@ -1,0 +1,17 @@
+.statementPage {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #151515;
+  padding: 8px;
+  gap: 12px;
+}
+
+.statementLeft {
+  width: 330px;
+  flex-shrink: 0;
+}
+
+.statementMain {
+  flex: 1;
+}

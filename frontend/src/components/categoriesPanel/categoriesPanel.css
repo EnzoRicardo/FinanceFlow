@@ -53,7 +53,7 @@
 
 .presetButton {
   border: none;
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 12px 18px;
   background-color: #d9d9d9;
   color: #2b2b2b;
@@ -81,7 +81,7 @@
 
 .categoryBlock {
   background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
+  border-radius: 20px;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -106,7 +106,7 @@
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #dcdcdc;
-  border-radius: 10px;
+  border-radius: 20px;
   font-size: 0.95rem;
   outline: none;
   box-sizing: border-box;
@@ -121,7 +121,7 @@
 
 .removeCategoryButton {
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 12px 14px;
   background-color: #ff6b6b;
   color: #ffffff;
@@ -130,6 +130,39 @@
   font-weight: 500;
   cursor: pointer;
   transition: 0.2s ease;
+}
+
+.defaultCategoryBadge {
+  border: none;
+  border-radius: 20px;
+  padding: 12px 14px;
+  background-color: #2e2e2e;
+  color: #ffffff59;
+  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.savePresetButton {
+  border: none;
+  border-radius: 20px;
+  padding: 12px 14px;
+  background-color: #a1b919;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.presetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .removeCategoryButton:hover {
@@ -147,7 +180,7 @@
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #dcdcdc;
-  border-radius: 10px;
+  border-radius: 20px;
   font-size: 0.95rem;
   outline: none;
   box-sizing: border-box;
@@ -162,7 +195,7 @@
 
 .addCategoryButton {
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 12px 16px;
   background-color: #1f8f4e;
   color: #ffffff;

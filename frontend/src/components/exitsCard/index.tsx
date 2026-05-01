@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { DEFAULT_CATEGORIES } from "../../constants/defaultCategories";
 import "./exitsCard.css";
 
 const BrazilianCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -21,6 +30,7 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
   const [exitCategories, setExitCategories] = useState<{ id: string; name: string }[]>(
     [],
   );
+  const [activePreset, setActivePreset] = useState<"personal" | "business">("personal");
 
   async function loadExpenseCategories() {
     const user = auth.currentUser;
@@ -42,10 +52,26 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
     setExitCategories(list);
   }
 
+  async function loadUserPreset() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    if (snap.exists()) {
+      const preset = snap.data().categoryPreset;
+
+      if (preset === "personal" || preset === "business") {
+        setActivePreset(preset);
+      }
+    }
+  }
+
   function openModal() {
     setIsModalOpen(true);
     setError("");
     void loadExpenseCategories();
+    void loadUserPreset();
   }
 
   function closeModal() {
@@ -132,6 +158,15 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
     loadExits();
   }, [selectedMonth]);
 
+  const defaultExpenseCategories = DEFAULT_CATEGORIES[activePreset].expenses;
+
+  const finalExpenseCategories = [
+    ...new Set([
+      ...defaultExpenseCategories,
+      ...exitCategories.map((c) => c.name)
+    ])
+  ]
+
   return (
     <>
     <div className="exitsCard">
@@ -162,9 +197,9 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
               onChange={(e) => setCategory(e.target.value)}
             >
               <option value="">Selecione uma categoria</option>
-              {exitCategories.map((item) => (
-                <option key={item.id} value={item.name}>
-                  {item.name}
+              {finalExpenseCategories.map((item) => (
+                <option key={item} value={item}>
+                  {item}
                 </option>
               ))}
             </select>
