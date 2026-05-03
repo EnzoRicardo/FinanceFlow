@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -31,6 +32,16 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
     [],
   );
   const [activePreset, setActivePreset] = useState<"personal" | "business">("personal");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   async function loadExpenseCategories() {
     const user = auth.currentUser;
@@ -82,6 +93,8 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
   }
   
   async function addTransaction() {
+      if (submitting) return;
+
       const user = auth.currentUser;
       if (!user) return;
 
@@ -105,7 +118,7 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
         createdAt: new Date(),
       };
 
-
+      setSubmitting(true);
       try {
         await addDoc(collection(db, "transactions"), newTransaction);
         setError("");
@@ -114,49 +127,58 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
       } catch (err) {
         setError("Erro ao adicionar despesa");
         console.error(err);
+      } finally {
+        setSubmitting(false);
       }
   }
 
   async function loadExits() {
-      const user = auth.currentUser;
+      const user = currentUser ?? auth.currentUser;
       if (!user) return;
-      
-      const startOfMonth = new Date(
-        selectedMonth.getFullYear(),
-        selectedMonth.getMonth(),
-        1
-      )
 
-      const startOfNextMonth = new Date(
-        selectedMonth.getFullYear(),
-        selectedMonth.getMonth() + 1,
-        1
-      )
+      setLoading(true);
 
-      const q = query(
-        collection(db, "transactions"),
-        where("userId", "==", user.uid),
-        where("type", "==", "expense"),
-        where("createdAt", ">=", startOfMonth),
-        where("createdAt", "<", startOfNextMonth)
-      )
+      try {
+        const startOfMonth = new Date(
+          selectedMonth.getFullYear(),
+          selectedMonth.getMonth(),
+          1
+        )
 
-      const snapshot = await getDocs(q);
+        const startOfNextMonth = new Date(
+          selectedMonth.getFullYear(),
+          selectedMonth.getMonth() + 1,
+          1
+        )
 
-      let sum = 0;
+        const q = query(
+          collection(db, "transactions"),
+          where("userId", "==", user.uid),
+          where("type", "==", "expense"),
+          where("createdAt", ">=", startOfMonth),
+          where("createdAt", "<", startOfNextMonth)
+        )
 
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        const value = Number(data.amount) || 0;
-        sum += value;
-      })
+        const snapshot = await getDocs(q);
 
-      setTotalExits(sum);
+        let sum = 0;
+
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          const value = Number(data.amount) || 0;
+          sum += value;
+        })
+
+        setTotalExits(sum);
+      } finally {
+        setLoading(false);
+      }
   }
 
   useEffect(() => {
+    if (!currentUser) return;
     loadExits();
-  }, [selectedMonth]);
+  }, [selectedMonth, currentUser]);
 
   const defaultExpenseCategories = DEFAULT_CATEGORIES[activePreset].expenses;
 
@@ -171,7 +193,11 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
     <>
     <div className="exitsCard">
       <h3 className="titleExits">Despesas</h3>
-      <p className="totalExits">{BrazilianCurrencyFormatter.format(totalExits)}</p>
+      <p className="totalExits">
+        {loading
+          ? "Carregando..."
+          : BrazilianCurrencyFormatter.format(totalExits)}
+      </p>
 
       <button className="exitsButton" onClick={openModal}>
         Registrar saída
@@ -207,8 +233,20 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
           {error && <p className="exitsError">{error}</p>}
 
           <div className="modalActions">
-            <button className="modalBtn" onClick={addTransaction}>Salvar</button>
-            <button className="modalBtn" onClick={closeModal}>Cancelar</button>
+            <button
+              className="modalBtn modalBtn--cancel"
+              onClick={closeModal}
+              disabled={submitting}
+            >
+              Cancelar
+            </button>
+            <button
+              className="modalBtn modalBtn--save"
+              onClick={addTransaction}
+              disabled={submitting}
+            >
+              {submitting ? "Salvando..." : "Salvar"}
+            </button>
           </div>
         </div>
       </div>

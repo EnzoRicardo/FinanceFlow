@@ -15,13 +15,16 @@ type TotalCardPorps = {
 
 export default function TotalCard({selectedMonth} : TotalCardPorps) {
   const [totalBalance, setTotalBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let unsubscribeSnapshot: (() => void) | undefined;
+    setLoading(true);
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (!user) {
         setTotalBalance(0);
+        setLoading(false);
         return;
       }
 
@@ -62,6 +65,7 @@ export default function TotalCard({selectedMonth} : TotalCardPorps) {
         });
 
         setTotalBalance(incomeSum - expenseSum);
+        setLoading(false);
       });
     });
 
@@ -75,7 +79,9 @@ export default function TotalCard({selectedMonth} : TotalCardPorps) {
     <div className="totalCard">
       <h3 className="titleTotal">Total</h3>
       <p className="totalCardMoney">
-        {BrazilianCurrencyFormatter.format(totalBalance)}
+        {loading
+          ? "Carregando..."
+          : BrazilianCurrencyFormatter.format(totalBalance)}
       </p>
     </div>
   );

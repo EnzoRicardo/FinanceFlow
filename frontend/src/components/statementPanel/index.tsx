@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
   getDocs,
@@ -29,48 +30,51 @@ const BrazilianCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
 export default function StatementPanel() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filter, setFilter] = useState<FilterType>("all");
-  const [loading, setLoading] = useState(false);
-
-  async function loadTransactions() {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    setLoading(true);
-
-    try {
-      const q = query(
-        collection(db, "transactions"),
-        where("userId", "==", user.uid),
-        orderBy("createdAt", "desc")
-      );
-
-      const snapshot = await getDocs(q);
-
-      const list: Transaction[] = snapshot.docs.map((doc) => {
-        const data = doc.data();
-
-        return {
-          id: doc.id,
-          type: data.type === "income" ? "income" : "expense",
-          amount: Number(data.amount) || 0,
-          category: String(data.category ?? "Sem categoria"),
-          preset: data.preset,
-          createdAt: data.createdAt?.toDate
-            ? data.createdAt.toDate()
-            : new Date(),
-        };
-      });
-
-      setTransactions(list);
-    } catch (err) {
-      console.error("Erro ao carregar transações:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    void loadTransactions();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setTransactions([]);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const q = query(
+          collection(db, "transactions"),
+          where("userId", "==", user.uid),
+          orderBy("createdAt", "desc")
+        );
+
+        const snapshot = await getDocs(q);
+
+        const list: Transaction[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+
+          return {
+            id: doc.id,
+            type: data.type === "income" ? "income" : "expense",
+            amount: Number(data.amount) || 0,
+            category: String(data.category ?? "Sem categoria"),
+            preset: data.preset,
+            createdAt: data.createdAt?.toDate
+              ? data.createdAt.toDate()
+              : new Date(),
+          };
+        });
+
+        setTransactions(list);
+      } catch (err) {
+        console.error("Erro ao carregar transações:", err);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const filteredTransactions =

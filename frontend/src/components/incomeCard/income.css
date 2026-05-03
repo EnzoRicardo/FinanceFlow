@@ -125,7 +125,30 @@
 }
 
 .modalBtn:hover {
-  background: #888888;
   transform: scale(1.02);
+}
+
+.modalBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modalBtn--cancel {
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+}
+
+.modalBtn--cancel:hover:not(:disabled) {
+  background-color: #5a5a5a;
+}
+
+.modalBtn--save {
+  background-color: rgba(107, 203, 119, 0.35);
+  color: #ffffff;
+}
+
+.modalBtn--save:hover:not(:disabled) {
+  background-color: rgba(107, 203, 119, 0.55);
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -46,6 +47,18 @@ export default function CategoriesPanel() {
   const [newExpenseCategory, setNewExpenseCategory] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [savingPreset, setSavingPreset] = useState(false);
+  const [addingType, setAddingType] = useState<CategoryType | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   function applyPreset(preset: PresetType) {
     setSelectedPreset(preset);
@@ -54,6 +67,8 @@ export default function CategoriesPanel() {
   }
 
   async function savePresetDefinition() {
+    if (savingPreset) return;
+
     const user = auth.currentUser;
     if (!user) return;
 
@@ -62,6 +77,7 @@ export default function CategoriesPanel() {
       return;
     }
 
+    setSavingPreset(true);
     try {
       await setDoc(
         doc(db, "users", user.uid),
@@ -74,11 +90,13 @@ export default function CategoriesPanel() {
     } catch (err) {
       setError("Erro ao salvar definição");
       console.error(err);
+    } finally {
+      setSavingPreset(false);
     }
   }
 
   async function loadCategories() {
-    const user = auth.currentUser;
+    const user = currentUser ?? auth.currentUser;
     if (!user) return;
 
     const q = query(
@@ -107,27 +125,33 @@ export default function CategoriesPanel() {
   }
 
   useEffect(() => {
-    async function initCategoriesPanel() {
-      const user = auth.currentUser;
-      if (!user) return;
+    if (!currentUser) return;
 
-      const userSnap = await getDoc(doc(db, "users", user.uid));
+    async function initCategoriesPanel(user: User) {
+      setLoading(true);
+      try {
+        const userSnap = await getDoc(doc(db, "users", user.uid));
 
-      if (userSnap.exists()) {
-        const savedPreset = userSnap.data().categoryPreset;
+        if (userSnap.exists()) {
+          const savedPreset = userSnap.data().categoryPreset;
 
-        if (savedPreset === "personal" || savedPreset === "business") {
-          setSelectedPreset(savedPreset);
+          if (savedPreset === "personal" || savedPreset === "business") {
+            setSelectedPreset(savedPreset);
+          }
         }
-      }
 
-      await loadCategories();
+        await loadCategories();
+      } finally {
+        setLoading(false);
+      }
     }
 
-    void initCategoriesPanel();
-  }, []);
+    void initCategoriesPanel(currentUser);
+  }, [currentUser]);
 
   async function addCategory(type: CategoryType) {
+    if (addingType) return;
+
     const user = auth.currentUser;
     if (!user) return;
 
@@ -173,6 +197,7 @@ export default function CategoriesPanel() {
       preset,
     };
 
+    setAddingType(type);
     try {
       await addDoc(collection(db, "categories"), payload);
       setError("");
@@ -188,15 +213,22 @@ export default function CategoriesPanel() {
     } catch (err) {
       setError("Erro ao adicionar categoria");
       console.error(err);
+    } finally {
+      setAddingType(null);
     }
   }
 
   async function removeCategory(id: string) {
+    if (removingId) return;
+
+    setRemovingId(id);
     try {
       await deleteDoc(doc(db, "categories", id));
       await loadCategories();
     } catch (err) {
       console.error(err);
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -275,6 +307,9 @@ export default function CategoriesPanel() {
         {successMessage ? (
             <p className="categoriesSuccess">{successMessage}</p>
         ) : null}
+        {loading ? (
+            <p className="categoriesLoading">Carregando categorias...</p>
+        ) : null}
         </div>
 
         <div className="presetSection">
@@ -307,8 +342,9 @@ export default function CategoriesPanel() {
             type="button"
             className="savePresetButton"
             onClick={() => void savePresetDefinition()}
+            disabled={savingPreset}
             >
-            Salvar definição
+            {savingPreset ? "Salvando..." : "Salvar definição"}
             </button>
         </div>
         </div>
@@ -341,8 +377,9 @@ export default function CategoriesPanel() {
                     type="button"
                     className="removeCategoryButton"
                     onClick={() => void removeCategory(category.id)}
+                    disabled={removingId !== null}
                     >
-                    Remover
+                    {removingId === category.id ? "Removendo..." : "Remover"}
                     </button>
                 )}
                 </div>
@@ -362,8 +399,9 @@ export default function CategoriesPanel() {
                 type="button"
                 className="addCategoryButton"
                 onClick={() => void addCategory("income")}
+                disabled={addingType !== null}
             >
-                Adicionar
+                {addingType === "income" ? "Adicionando..." : "Adicionar"}
             </button>
             </div>
         </div>
@@ -395,8 +433,9 @@ export default function CategoriesPanel() {
                     type="button"
                     className="removeCategoryButton"
                     onClick={() => void removeCategory(category.id)}
+                    disabled={removingId !== null}
                     >
-                    Remover
+                    {removingId === category.id ? "Removendo..." : "Remover"}
                     </button>
                 )}
                 </div>
@@ -416,8 +455,9 @@ export default function CategoriesPanel() {
                 type="button"
                 className="addCategoryButton"
                 onClick={() => void addCategory("expense")}
+                disabled={addingType !== null}
             >
-                Adicionar
+                {addingType === "expense" ? "Adicionando..." : "Adicionar"}
             </button>
             </div>
         </div>

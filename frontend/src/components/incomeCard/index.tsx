@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -33,6 +34,16 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
   const [incomeCategories, setIncomeCategories] = useState<
     { id: string; name: string }[]
   >([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   async function loadUserPreset() {
     const user = auth.currentUser;
@@ -64,6 +75,8 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
   }
 
   async function addTransaction() {
+    if (submitting) return;
+
     const user = auth.currentUser;
     if (!user) return;
 
@@ -85,6 +98,7 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
       createdAt: new Date(),
     };
 
+    setSubmitting(true);
     try {
       await addDoc(collection(db, "transactions"), newTransaction);
       setError("");
@@ -93,44 +107,52 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
     } catch (err) {
       setError("Erro ao adicionar receita");
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   }
 
   async function loadIncome() {
-    const user = auth.currentUser;
+    const user = currentUser ?? auth.currentUser;
     if (!user) return;
 
-    const startOfMonth = new Date(
-      selectedMonth.getFullYear(),
-      selectedMonth.getMonth(),
-      1
-    );
+    setLoading(true);
 
-    const startOfNextMonth = new Date(
-      selectedMonth.getFullYear(),
-      selectedMonth.getMonth() + 1,
-      1
-    );
+    try {
+      const startOfMonth = new Date(
+        selectedMonth.getFullYear(),
+        selectedMonth.getMonth(),
+        1
+      );
 
-    const q = query(
-      collection(db, "transactions"),
-      where("userId", "==", user.uid),
-      where("type", "==", "income"),
-      where("createdAt", ">=", startOfMonth),
-      where("createdAt", "<", startOfNextMonth)
-    );
+      const startOfNextMonth = new Date(
+        selectedMonth.getFullYear(),
+        selectedMonth.getMonth() + 1,
+        1
+      );
 
-    const snapshot = await getDocs(q);
+      const q = query(
+        collection(db, "transactions"),
+        where("userId", "==", user.uid),
+        where("type", "==", "income"),
+        where("createdAt", ">=", startOfMonth),
+        where("createdAt", "<", startOfNextMonth)
+      );
 
-    let sum = 0;
+      const snapshot = await getDocs(q);
 
-    snapshot.docs.forEach((doc) => {
-      const data = doc.data();
-      const value = Number(data.amount) || 0;
-      sum += value;
-    });
+      let sum = 0;
 
-    setTotalIncome(sum);
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        const value = Number(data.amount) || 0;
+        sum += value;
+      });
+
+      setTotalIncome(sum);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function loadIncomeCategories() {
@@ -156,8 +178,9 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
   }
 
   useEffect(() => {
+    if (!currentUser) return;
     void loadIncome();
-  }, [selectedMonth]);
+  }, [selectedMonth, currentUser]);
 
   const defaultIncomeCategories = DEFAULT_CATEGORIES[activePreset].income;
 
@@ -173,7 +196,9 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
       <div className="incomeCard">
         <h3 className="titleIncome">Receita</h3>
         <p className="totalIncome">
-          {BrazilianCurrencyFormatter.format(totalIncome)}
+          {loading
+            ? "Carregando..."
+            : BrazilianCurrencyFormatter.format(totalIncome)}
         </p>
 
         <button className="incomeButton" onClick={openModal}>
@@ -210,11 +235,19 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
             {error && <p className="incomeError">{error}</p>}
 
             <div className="modalActions">
-              <button className="modalBtn" onClick={addTransaction}>
-                Salvar
-              </button>
-              <button className="modalBtn" onClick={closeModal}>
+              <button
+                className="modalBtn modalBtn--cancel"
+                onClick={closeModal}
+                disabled={submitting}
+              >
                 Cancelar
+              </button>
+              <button
+                className="modalBtn modalBtn--save"
+                onClick={addTransaction}
+                disabled={submitting}
+              >
+                {submitting ? "Salvando..." : "Salvar"}
               </button>
             </div>
           </div>
