@@ -1,0 +1,256 @@
+.goalsPanel {
+  width: 100%;
+  background-color: #2a2a2a;
+  border-radius: 15px;
+  padding: 32px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+
+.goalsHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.goalsTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.goalsSubtitle {
+  margin: 0;
+  color: #bbb;
+  font-size: 14px;
+}
+
+.goalsError {
+  margin: 8px 0 0 0;
+  color: #ff8a80;
+  font-size: 0.95rem;
+}
+
+.goalsSectionTitle {
+  margin: 0 0 14px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #ddd;
+}
+
+.goalsCreateBlock,
+.goalsListBlock {
+  background-color: #3E3E3E;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.goalsCreateRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 12px;
+}
+
+.goalsInput {
+  padding: 10px 12px;
+  border: none;
+  background-color: #2c2c2c;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.goalsInput::placeholder {
+  color: #888;
+}
+
+.goalsCreateButton {
+  padding: 10px 20px;
+  border: none;
+  background-color: rgba(107, 203, 119, 0.35);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.goalsCreateButton:hover:not(:disabled) {
+  background-color: rgba(107, 203, 119, 0.55);
+}
+
+.goalsCreateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.goalsMessage {
+  margin: 0;
+  color: #bbb;
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.goalsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.goalCard {
+  background-color: #2c2c2c;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goalCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.goalName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.goalDeadline {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.goalProgressInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.goalPercent {
+  color: #6BCB77;
+  font-weight: 600;
+}
+
+.goalPercentDone {
+  color: #4D96FF;
+  font-weight: 600;
+}
+
+.goalProgressBar {
+  width: 100%;
+  height: 8px;
+  background-color: #1c1c1c;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.goalProgressFill {
+  height: 100%;
+  background-color: #6BCB77;
+  transition: width 0.3s ease;
+}
+
+.goalProgressFillDone {
+  height: 100%;
+  background-color: #4D96FF;
+  transition: width 0.3s ease;
+}
+
+.goalContributeButton {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: none;
+  background-color: rgba(107, 203, 119, 0.25);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.goalContributeButton:hover:not(:disabled) {
+  background-color: rgba(107, 203, 119, 0.45);
+}
+
+.goalContributeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.goalContributeRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.goalContributeConfirm {
+  padding: 10px 14px;
+  border: none;
+  background-color: rgba(107, 203, 119, 0.45);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.goalContributeConfirm:hover:not(:disabled) {
+  background-color: rgba(107, 203, 119, 0.65);
+}
+
+.goalContributeCancel {
+  padding: 10px 14px;
+  border: none;
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.goalContributeCancel:hover:not(:disabled) {
+  background-color: #5a5a5a;
+}
+
+.goalContributeConfirm:disabled,
+.goalContributeCancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.goalRemoveButton {
+  padding: 6px 12px;
+  border: none;
+  background-color: transparent;
+  color: #ff8a80;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.2s ease;
+}
+
+.goalRemoveButton:hover:not(:disabled) {
+  background-color: rgba(255, 138, 128, 0.15);
+}
+
+.goalRemoveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

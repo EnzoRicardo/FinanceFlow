@@ -4,6 +4,7 @@ import CreateAccount from "../pages/createAccount";
 import Home from "../pages/home";
 import CategoriesPage from "../pages/categories";
 import StatementPage from "../pages/statement";
+import GoalsPage from "../pages/goals";
 
 export default function AppRoutes() {
     return (
@@ -15,7 +16,8 @@ export default function AppRoutes() {
             <Route path="/home" element={<Home />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/statement" element={<StatementPage />} />
-            
+            <Route path="/goals" element={<GoalsPage />} />
+
 
         </Routes>
     )
