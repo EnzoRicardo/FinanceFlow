@@ -1,0 +1,243 @@
+.budgetPanel {
+  width: 100%;
+  background-color: #2a2a2a;
+  border-radius: 15px;
+  padding: 32px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.budgetHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.budgetTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.budgetSubtitle {
+  margin: 0;
+  color: #bbb;
+  font-size: 14px;
+}
+
+.budgetError {
+  margin: 8px 0 0 0;
+  color: #ff8a80;
+  font-size: 0.95rem;
+}
+
+.budgetSectionTitle {
+  margin: 0 0 14px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #ddd;
+}
+
+.budgetMonthSelector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background-color: #3E3E3E;
+  border-radius: 12px;
+  padding: 10px 16px;
+  align-self: flex-start;
+}
+
+.budgetMonthButton {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: 0.2s ease;
+}
+
+.budgetMonthButton:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.budgetMonthLabel {
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  min-width: 160px;
+  text-align: center;
+}
+
+.budgetCreateBlock,
+.budgetListBlock {
+  background-color: #3E3E3E;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.budgetCreateRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 12px;
+}
+
+.budgetInput {
+  padding: 10px 12px;
+  border: none;
+  background-color: #2c2c2c;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.budgetInput::placeholder {
+  color: #888;
+}
+
+.budgetCreateButton {
+  padding: 10px 20px;
+  border: none;
+  background-color: rgba(107, 203, 119, 0.35);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.budgetCreateButton:hover:not(:disabled) {
+  background-color: rgba(107, 203, 119, 0.55);
+}
+
+.budgetCreateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.budgetHint {
+  margin: 12px 0 0 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.budgetMessage {
+  margin: 0;
+  color: #bbb;
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.budgetList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.budgetCard {
+  background-color: #2c2c2c;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.budgetCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.budgetCategoryName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.budgetRemoveButton {
+  padding: 6px 12px;
+  border: none;
+  background-color: transparent;
+  color: #ff8a80;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.2s ease;
+}
+
+.budgetRemoveButton:hover:not(:disabled) {
+  background-color: rgba(255, 138, 128, 0.15);
+}
+
+.budgetRemoveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.budgetProgressInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.budgetPercent {
+  font-weight: 600;
+}
+
+.budgetPercent--ok {
+  color: #6BCB77;
+}
+
+.budgetPercent--warn {
+  color: #FFD93D;
+}
+
+.budgetPercent--over {
+  color: #FF6B6B;
+}
+
+.budgetProgressBar {
+  width: 100%;
+  height: 8px;
+  background-color: #1c1c1c;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.budgetProgressFill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.budgetProgressFill--ok {
+  background-color: #6BCB77;
+}
+
+.budgetProgressFill--warn {
+  background-color: #FFD93D;
+}
+
+.budgetProgressFill--over {
+  background-color: #FF6B6B;
+}
+
+.budgetWarn {
+  margin: 0;
+  color: #FF6B6B;
+  font-size: 13px;
+  font-weight: 500;
+}
