@@ -6,6 +6,7 @@ import CategoriesPage from "../pages/categories";
 import StatementPage from "../pages/statement";
 import GoalsPage from "../pages/goals";
 import BudgetPage from "../pages/budget";
+import ReportsPage from "../pages/reports";
 
 export default function AppRoutes() {
     return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
             <Route path="/statement" element={<StatementPage />} />
             <Route path="/goals" element={<GoalsPage />} />
             <Route path="/budget" element={<BudgetPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
 
 
         </Routes>
