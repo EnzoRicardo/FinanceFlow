@@ -34,6 +34,8 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
   const [incomeCategories, setIncomeCategories] = useState<
     { id: string; name: string }[]
   >([]);
+  const [accounts, setAccounts] = useState<{ id: string; name: string }[]>([]);
+  const [accountId, setAccountId] = useState("");
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -65,13 +67,33 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
     setError("");
     void loadUserPreset();
     void loadIncomeCategories();
+    void loadAccounts();
   }
 
   function closeModal() {
     setIsModalOpen(false);
     setAmount("");
     setCategory("");
+    setAccountId("");
     setError("");
+  }
+
+  async function loadAccounts() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const q = query(
+      collection(db, "accounts"),
+      where("userId", "==", user.uid)
+    );
+
+    const snapshot = await getDocs(q);
+    const list = snapshot.docs
+      .map((d) => ({ id: d.id, name: String(d.data().name ?? "").trim() }))
+      .filter((a) => a.name.length > 0)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    setAccounts(list);
   }
 
   async function addTransaction() {
@@ -95,6 +117,7 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
       type: "income",
       amount: Number(amount),
       category: category.trim(),
+      accountId: accountId || null,
       createdAt: new Date(),
     };
 
@@ -231,6 +254,21 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
                 </option>
               ))}
             </select>
+
+            {accounts.length > 0 && (
+              <select
+                className="incomeInput"
+                value={accountId}
+                onChange={(e) => setAccountId(e.target.value)}
+              >
+                <option value="">Sem conta</option>
+                {accounts.map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name}
+                  </option>
+                ))}
+              </select>
+            )}
 
             {error && <p className="incomeError">{error}</p>}
 
