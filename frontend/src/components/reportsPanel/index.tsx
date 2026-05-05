@@ -100,15 +100,17 @@ export default function ReportsPanel() {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const list: Transaction[] = snapshot.docs.map((docSnap) => {
-        const d = docSnap.data();
-        return {
-          type: d.type === "income" ? "income" : "expense",
-          amount: Number(d.amount) || 0,
-          category: String(d.category ?? "Sem categoria"),
-          createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(),
-        };
-      });
+      const list: Transaction[] = snapshot.docs
+        .filter((docSnap) => docSnap.data().isGoalTransfer !== true)
+        .map((docSnap) => {
+          const d = docSnap.data();
+          return {
+            type: d.type === "income" ? "income" : "expense",
+            amount: Number(d.amount) || 0,
+            category: String(d.category ?? "Sem categoria"),
+            createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(),
+          };
+        });
 
       setTransactions(list);
       setLoading(false);

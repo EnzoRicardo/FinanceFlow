@@ -188,6 +188,7 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
 
         snapshot.docs.forEach((doc) => {
           const data = doc.data();
+          if (data.isGoalTransfer === true) return;
           const value = Number(data.amount) || 0;
           sum += value;
         })

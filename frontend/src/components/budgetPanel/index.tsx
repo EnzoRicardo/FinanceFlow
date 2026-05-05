@@ -161,6 +161,7 @@ export default function BudgetPanel() {
 
       snapshot.docs.forEach((docSnap) => {
         const d = docSnap.data() as ExpenseTx;
+        if ((d as { isGoalTransfer?: boolean }).isGoalTransfer === true) return;
         const category = String(d.category ?? "").trim();
         const amount = Number(d.amount) || 0;
         totals.set(category, (totals.get(category) ?? 0) + amount);
