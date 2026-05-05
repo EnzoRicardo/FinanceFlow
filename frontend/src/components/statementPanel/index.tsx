@@ -11,7 +11,7 @@ import {
 import "./statementPanel.css";
 
 type TransactionType = "income" | "expense";
-type FilterType = "all" | TransactionType;
+type FilterType = "all" | TransactionType | "goal";
 
 type Transaction = {
   id: string;
@@ -20,6 +20,7 @@ type Transaction = {
   category: string;
   preset?: "personal" | "business";
   createdAt: Date;
+  isGoalTransfer: boolean;
 };
 
 const BrazilianCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -63,6 +64,7 @@ export default function StatementPanel() {
             createdAt: data.createdAt?.toDate
               ? data.createdAt.toDate()
               : new Date(),
+            isGoalTransfer: data.isGoalTransfer === true,
           };
         });
 
@@ -80,7 +82,11 @@ export default function StatementPanel() {
   const filteredTransactions =
     filter === "all"
       ? transactions
-      : transactions.filter((item) => item.type === filter);
+      : filter === "goal"
+        ? transactions.filter((item) => item.isGoalTransfer)
+        : transactions.filter(
+            (item) => item.type === filter && !item.isGoalTransfer
+          );
 
   function formatDate(date: Date) {
     return date.toLocaleDateString("pt-BR");
@@ -132,6 +138,16 @@ export default function StatementPanel() {
         >
           Saídas
         </button>
+
+        <button
+          type="button"
+          className={`statementFilterButton ${
+            filter === "goal" ? "activeStatementFilter" : ""
+          }`}
+          onClick={() => setFilter("goal")}
+        >
+          Metas
+        </button>
       </div>
 
       <div className="statementTable">
@@ -149,35 +165,43 @@ export default function StatementPanel() {
           <p className="statementMessage">Nenhuma transação encontrada.</p>
         ) : (
           <div className="statementList">
-            {filteredTransactions.map((item) => (
-              <div key={item.id} className="statementItem">
-                <span
-                  className={
-                    item.type === "income"
-                      ? "statementTypeIncome"
-                      : "statementTypeExpense"
-                  }
-                >
-                  {item.type === "income" ? "Entrada" : "Saída"}
-                </span>
+            {filteredTransactions.map((item) => {
+              const typeClass = item.isGoalTransfer
+                ? "statementTypeGoal"
+                : item.type === "income"
+                  ? "statementTypeIncome"
+                  : "statementTypeExpense";
 
-                <span>{item.category}</span>
+              const amountClass = item.isGoalTransfer
+                ? "statementAmountGoal"
+                : item.type === "income"
+                  ? "statementAmountIncome"
+                  : "statementAmountExpense";
 
-                <span
-                  className={
-                    item.type === "income"
-                      ? "statementAmountIncome"
-                      : "statementAmountExpense"
-                  }
-                >
-                  {item.type === "income" ? "+" : "-"}{" "}
-                  {BrazilianCurrencyFormatter.format(item.amount)}
-                </span>
+              const label = item.isGoalTransfer
+                ? item.type === "expense"
+                  ? "Aplicação em meta"
+                  : "Resgate de meta"
+                : item.type === "income"
+                  ? "Entrada"
+                  : "Saída";
 
-                <span>{formatDate(item.createdAt)}</span>
-                <span>{formatTime(item.createdAt)}</span>
-              </div>
-            ))}
+              return (
+                <div key={item.id} className="statementItem">
+                  <span className={typeClass}>{label}</span>
+
+                  <span>{item.category}</span>
+
+                  <span className={amountClass}>
+                    {item.type === "income" ? "+" : "-"}{" "}
+                    {BrazilianCurrencyFormatter.format(item.amount)}
+                  </span>
+
+                  <span>{formatDate(item.createdAt)}</span>
+                  <span>{formatTime(item.createdAt)}</span>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

@@ -76,6 +76,17 @@
   white-space: nowrap;
 }
 
+.recentTransactionTypeGoal {
+  color: #4D96FF;
+  font-weight: 600;
+}
+
+.recentTransactionAmountGoal {
+  color: #4D96FF;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .recentTransactionDate {
   color: #aaa;
   font-size: 12px;

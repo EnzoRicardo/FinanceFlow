@@ -21,6 +21,7 @@ type Transaction = {
   amount: number;
   category: string;
   createdAt: Date;
+  isGoalTransfer: boolean;
 };
 
 const BrazilianCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -78,6 +79,7 @@ export default function RecentTransactions({
           amount: Number(d.amount) || 0,
           category: String(d.category ?? "Sem categoria"),
           createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(),
+          isGoalTransfer: d.isGoalTransfer === true,
         };
       });
 
@@ -107,36 +109,46 @@ export default function RecentTransactions({
         </p>
       ) : (
         <ul className="recentTransactionsList">
-          {transactions.map((item) => (
-            <li key={item.id} className="recentTransactionItem">
-              <span
-                className={
-                  item.type === "income"
-                    ? "recentTransactionTypeIncome"
-                    : "recentTransactionTypeExpense"
-                }
-              >
-                {item.type === "income" ? "Entrada" : "Saída"}
-              </span>
+          {transactions.map((item) => {
+            const typeClass = item.isGoalTransfer
+              ? "recentTransactionTypeGoal"
+              : item.type === "income"
+                ? "recentTransactionTypeIncome"
+                : "recentTransactionTypeExpense";
 
-              <span className="recentTransactionCategory">{item.category}</span>
+            const amountClass = item.isGoalTransfer
+              ? "recentTransactionAmountGoal"
+              : item.type === "income"
+                ? "recentTransactionAmountIncome"
+                : "recentTransactionAmountExpense";
 
-              <span
-                className={
-                  item.type === "income"
-                    ? "recentTransactionAmountIncome"
-                    : "recentTransactionAmountExpense"
-                }
-              >
-                {item.type === "income" ? "+" : "-"}{" "}
-                {BrazilianCurrencyFormatter.format(item.amount)}
-              </span>
+            const label = item.isGoalTransfer
+              ? item.type === "expense"
+                ? "Meta"
+                : "Resgate"
+              : item.type === "income"
+                ? "Entrada"
+                : "Saída";
 
-              <span className="recentTransactionDate">
-                {formatDate(item.createdAt)}
-              </span>
-            </li>
-          ))}
+            return (
+              <li key={item.id} className="recentTransactionItem">
+                <span className={typeClass}>{label}</span>
+
+                <span className="recentTransactionCategory">
+                  {item.category}
+                </span>
+
+                <span className={amountClass}>
+                  {item.type === "income" ? "+" : "-"}{" "}
+                  {BrazilianCurrencyFormatter.format(item.amount)}
+                </span>
+
+                <span className="recentTransactionDate">
+                  {formatDate(item.createdAt)}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
