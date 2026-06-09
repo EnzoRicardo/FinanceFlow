@@ -38,14 +38,16 @@ export default function RecentTransactions({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      if (!user) {
+        setLoading(false);
+        setTransactions([]);
+      }
     });
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (!currentUser) return;
-
-    setLoading(true);
 
     const startOfMonth = new Date(
       selectedMonth.getFullYear(),

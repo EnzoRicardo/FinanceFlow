@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import "./createAccount.css"
 import card from "../../assets/card1.png"
 import shadow from "../../assets/shadow1.png"
 import logo from "../../assets/financeFlowBlack.png"
 import { Link } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { api } from "../../services/api";
 import Swal from "sweetalert2";
 
@@ -12,10 +13,6 @@ export default function CreateAccount() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [successMessage, setSuccessMessage] = useState(false);
-
-
-    
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
@@ -39,8 +36,8 @@ export default function CreateAccount() {
                     confirmButton: "ff-confirm",
                 }
             })
-        } catch (err: any) {
-            const detail = err?.response?.data?.detail;
+        } catch (err: unknown) {
+            const detail = isAxiosError(err) ? err.response?.data?.detail : undefined;
 
             const message =
                 typeof detail === "string"
@@ -113,10 +110,6 @@ export default function CreateAccount() {
                             />
 
                             <button className="btn" type="submit">Criar conta</button>
-
-                            {successMessage && (
-                                <span className="success-message" >Conta criada com sucesso!</span>
-                            )}
 
                             <p className="register">
                                 Já possuí conta?{" "}

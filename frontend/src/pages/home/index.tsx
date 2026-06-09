@@ -1,5 +1,5 @@
 import "./home.css";
-import React, { useState } from "react";
+import { useState } from "react";
 import SideBar from "../../components/sideBar";
 import IncomeCard from "../../components/incomeCard";
 import ExitsCard from "../../components/exitsCard";
