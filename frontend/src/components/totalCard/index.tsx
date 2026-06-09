@@ -19,9 +19,10 @@ export default function TotalCard({selectedMonth} : TotalCardPorps) {
 
   useEffect(() => {
     let unsubscribeSnapshot: (() => void) | undefined;
-    setLoading(true);
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setLoading(true);
+
       if (!user) {
         setTotalBalance(0);
         setLoading(false);

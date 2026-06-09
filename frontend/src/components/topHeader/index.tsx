@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth } from "../../services/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
@@ -22,10 +23,9 @@ export default function TopHeader({
   const [userName, setUserName] = useState("Usuário");
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setUserName(user.displayName || "Usuário");
-    }
+    return onAuthStateChanged(auth, (user) => {
+      setUserName(user?.displayName || "Usuário");
+    });
   }, []);
 
   const monthName = selectedMonth.toLocaleString("pt-BR", {

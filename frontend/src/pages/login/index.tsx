@@ -14,12 +14,10 @@ export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
 
         const isMobile = window.innerWidth <= 768;
 
@@ -49,11 +47,10 @@ export default function Login() {
             });
 
             navigate("/home")
-        } catch (error: any) {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-
-            setError(`Login failed: ${errorMessage}`);
+        } catch (error: unknown) {
+            const firebaseError = error as { code?: string; message?: string };
+            const errorCode = firebaseError.code;
+            const errorMessage = firebaseError.message;
 
             Swal.fire({
                 toast: true,
