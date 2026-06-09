@@ -144,11 +144,11 @@
 }
 
 .modalBtn--save {
-  background-color: rgba(107, 203, 119, 0.35);
+  background-color: rgb(0, 174, 87);
   color: #ffffff;
 }
 
 .modalBtn--save:hover:not(:disabled) {
-  background-color: rgba(107, 203, 119, 0.55);
+  background-color: rgb(23, 135, 38);
 }
 

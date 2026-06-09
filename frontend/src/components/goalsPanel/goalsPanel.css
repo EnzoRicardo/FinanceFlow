@@ -169,8 +169,13 @@
   transition: width 0.3s ease;
 }
 
+.goalActionsRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .goalContributeButton {
-  align-self: flex-start;
   padding: 8px 16px;
   border: none;
   background-color: rgba(107, 203, 119, 0.25);
@@ -187,6 +192,27 @@
 }
 
 .goalContributeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.goalWithdrawButton {
+  padding: 8px 16px;
+  border: none;
+  background-color: rgba(77, 150, 255, 0.25);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.goalWithdrawButton:hover:not(:disabled) {
+  background-color: rgba(77, 150, 255, 0.45);
+}
+
+.goalWithdrawButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

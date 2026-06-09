@@ -31,6 +31,8 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
   const [exitCategories, setExitCategories] = useState<{ id: string; name: string }[]>(
     [],
   );
+  const [accounts, setAccounts] = useState<{ id: string; name: string }[]>([]);
+  const [accountId, setAccountId] = useState("");
   const [activePreset, setActivePreset] = useState<"personal" | "business">("personal");
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,13 +85,33 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
     setError("");
     void loadExpenseCategories();
     void loadUserPreset();
+    void loadAccounts();
   }
 
   function closeModal() {
     setIsModalOpen(false);
     setAmount("");
     setCategory("");
+    setAccountId("");
     setError("");
+  }
+
+  async function loadAccounts() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const q = query(
+      collection(db, "accounts"),
+      where("userId", "==", user.uid)
+    );
+
+    const snapshot = await getDocs(q);
+    const list = snapshot.docs
+      .map((d) => ({ id: d.id, name: String(d.data().name ?? "").trim() }))
+      .filter((a) => a.name.length > 0)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    setAccounts(list);
   }
   
   async function addTransaction() {
@@ -115,6 +137,7 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
         type: "expense",
         amount: Number(amount),
         category: category.trim(),
+        accountId: accountId || null,
         createdAt: new Date(),
       };
 
@@ -229,6 +252,21 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
                 </option>
               ))}
             </select>
+
+            {accounts.length > 0 && (
+              <select
+                className="exitsInput"
+                value={accountId}
+                onChange={(e) => setAccountId(e.target.value)}
+              >
+                <option value="">Sem conta</option>
+                {accounts.map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name}
+                  </option>
+                ))}
+              </select>
+            )}
 
           {error && <p className="exitsError">{error}</p>}
 

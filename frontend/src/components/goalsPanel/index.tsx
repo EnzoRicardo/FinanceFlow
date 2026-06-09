@@ -9,8 +9,8 @@ import {
   onSnapshot,
   query,
   Timestamp,
-  updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import "./goalsPanel.css";
 
@@ -21,6 +21,8 @@ type Goal = {
   currentAmount: number;
   deadline: Date | null;
 };
+
+type ContributionMode = "deposit" | "withdraw";
 
 const BrazilianCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -39,6 +41,8 @@ export default function GoalsPanel() {
   const [error, setError] = useState("");
 
   const [contributingId, setContributingId] = useState<string | null>(null);
+  const [contributionMode, setContributionMode] =
+    useState<ContributionMode>("deposit");
   const [contributionAmount, setContributionAmount] = useState("");
   const [submittingContribution, setSubmittingContribution] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -131,8 +135,9 @@ export default function GoalsPanel() {
     }
   }
 
-  function startContribution(goalId: string) {
+  function startContribution(goalId: string, mode: ContributionMode) {
     setContributingId(goalId);
+    setContributionMode(mode);
     setContributionAmount("");
     setError("");
   }
@@ -145,20 +150,54 @@ export default function GoalsPanel() {
   async function submitContribution(goal: Goal) {
     if (submittingContribution) return;
 
+    const user = auth.currentUser;
+    if (!user) return;
+
     const value = Number(contributionAmount);
     if (!value || value <= 0) {
       setError("Valor inválido");
       return;
     }
 
+    if (contributionMode === "withdraw" && value > goal.currentAmount) {
+      setError("Valor maior que o disponível na meta");
+      return;
+    }
+
     setSubmittingContribution(true);
     try {
-      await updateDoc(doc(db, "goals", goal.id), {
-        currentAmount: goal.currentAmount + value,
+      const batch = writeBatch(db);
+
+      const txRef = doc(collection(db, "transactions"));
+      batch.set(txRef, {
+        userId: user.uid,
+        type: contributionMode === "deposit" ? "expense" : "income",
+        amount: value,
+        category:
+          contributionMode === "deposit"
+            ? `Meta: ${goal.name}`
+            : `Resgate: ${goal.name}`,
+        isGoalTransfer: true,
+        goalId: goal.id,
+        goalName: goal.name,
+        createdAt: Timestamp.now(),
       });
+
+      const goalRef = doc(db, "goals", goal.id);
+      const newAmount =
+        contributionMode === "deposit"
+          ? goal.currentAmount + value
+          : goal.currentAmount - value;
+      batch.update(goalRef, { currentAmount: newAmount });
+
+      await batch.commit();
       cancelContribution();
     } catch (err) {
-      setError("Erro ao adicionar valor");
+      setError(
+        contributionMode === "deposit"
+          ? "Erro ao adicionar valor"
+          : "Erro ao resgatar valor"
+      );
       console.error(err);
     } finally {
       setSubmittingContribution(false);
@@ -252,6 +291,7 @@ export default function GoalsPanel() {
               const completed = goal.currentAmount >= goal.targetAmount;
               const isContributing = contributingId === goal.id;
               const deadlineText = formatDeadline(goal.deadline);
+              const hasBalance = goal.currentAmount > 0;
 
               return (
                 <li key={goal.id} className="goalCard">
@@ -305,7 +345,11 @@ export default function GoalsPanel() {
                     <div className="goalContributeRow">
                       <input
                         type="number"
-                        placeholder="Valor"
+                        placeholder={
+                          contributionMode === "deposit"
+                            ? "Valor a guardar"
+                            : "Valor a resgatar"
+                        }
                         className="goalsInput"
                         value={contributionAmount}
                         onChange={(e) =>
@@ -319,7 +363,11 @@ export default function GoalsPanel() {
                         onClick={() => void submitContribution(goal)}
                         disabled={submittingContribution}
                       >
-                        {submittingContribution ? "Salvando..." : "Confirmar"}
+                        {submittingContribution
+                          ? "Salvando..."
+                          : contributionMode === "deposit"
+                            ? "Guardar"
+                            : "Resgatar"}
                       </button>
 
                       <button
@@ -332,14 +380,25 @@ export default function GoalsPanel() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      type="button"
-                      className="goalContributeButton"
-                      onClick={() => startContribution(goal.id)}
-                      disabled={completed}
-                    >
-                      {completed ? "Meta atingida" : "Adicionar valor"}
-                    </button>
+                    <div className="goalActionsRow">
+                      <button
+                        type="button"
+                        className="goalContributeButton"
+                        onClick={() => startContribution(goal.id, "deposit")}
+                        disabled={completed}
+                      >
+                        {completed ? "Meta atingida" : "Guardar dinheiro"}
+                      </button>
+
+                      <button
+                        type="button"
+                        className="goalWithdrawButton"
+                        onClick={() => startContribution(goal.id, "withdraw")}
+                        disabled={!hasBalance}
+                      >
+                        Resgatar
+                      </button>
+                    </div>
                   )}
                 </li>
               );

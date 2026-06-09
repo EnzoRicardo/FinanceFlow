@@ -19,6 +19,11 @@ vi.mock("sweetalert2", () => ({
 vi.mock("recharts", () => ({
   ResponsiveContainer: ({ children }: { children: unknown }) => children,
   PieChart: ({ children }: { children: unknown }) => children,
+  BarChart: ({ children }: { children: unknown }) => children,
+  Bar: () => null,
+  XAxis: () => null,
+  YAxis: () => null,
+  CartesianGrid: () => null,
   Pie: () => null,
   Cell: () => null,
   Tooltip: () => null,
@@ -70,6 +75,11 @@ vi.mock("firebase/firestore", () => ({
   setDoc: vi.fn().mockResolvedValue(undefined),
   deleteDoc: vi.fn().mockResolvedValue(undefined),
   updateDoc: vi.fn().mockResolvedValue(undefined),
+  writeBatch: vi.fn(() => ({
+    set: vi.fn(),
+    update: vi.fn(),
+    commit: vi.fn().mockResolvedValue(undefined),
+  })),
   Timestamp: {
     fromDate: vi.fn((date: Date) => date),
     now: vi.fn(() => new Date()),
