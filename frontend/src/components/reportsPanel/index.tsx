@@ -70,14 +70,16 @@ export default function ReportsPanel() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      if (!user) {
+        setLoading(false);
+        setTransactions([]);
+      }
     });
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (!currentUser) return;
-
-    setLoading(true);
 
     const start = new Date(
       selectedMonth.getFullYear(),
