@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { addDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { addDoc, onSnapshot, writeBatch } from "firebase/firestore";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createQuerySnapshot,
@@ -72,12 +72,16 @@ describe("GoalsPanel", () => {
       expect(screen.getByText(/Prazo:/)).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: "Adicionar valor" }));
-    await user.type(screen.getByPlaceholderText("Valor"), "500");
-    await user.click(screen.getByRole("button", { name: "Confirmar" }));
+    await user.click(screen.getByRole("button", { name: "Guardar dinheiro" }));
+    await user.type(screen.getByPlaceholderText("Valor a guardar"), "500");
+    await user.click(screen.getByRole("button", { name: "Guardar" }));
 
     await waitFor(() => {
-      expect(updateDoc).toHaveBeenCalled();
+      expect(writeBatch).toHaveBeenCalled();
+      const batch = vi.mocked(writeBatch).mock.results.at(-1)?.value as {
+        commit: ReturnType<typeof vi.fn>;
+      };
+      expect(batch.commit).toHaveBeenCalled();
     });
   });
 });
