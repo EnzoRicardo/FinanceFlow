@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import UserDetailsModal from "../userDetailsModal";
 import { api } from "../../services/api";
 import type { UserProfile, UserRole } from "../../types/user";

@@ -1,31 +1,16 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../services/firebase";
 import type { UserRole } from "../types/user";
-
-interface AuthContextValue {
-  firebaseUser: User | null;
-  role: UserRole;
-  isAdmin: boolean;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
+import { AuthContext } from "./auth-context";
 
 function normalizeRole(value: unknown): UserRole {
   return value === "admin" ? "admin" : "user";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [firebaseUser, setFirebaseUser] = useState<User | null>(auth.currentUser);
+  const [firebaseUser, setFirebaseUser] = useState(auth.currentUser);
   const [role, setRole] = useState<UserRole>("user");
   const [loading, setLoading] = useState(true);
 
@@ -67,14 +52,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider.");
-  }
-
-  return context;
 }

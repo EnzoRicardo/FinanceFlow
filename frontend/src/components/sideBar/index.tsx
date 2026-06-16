@@ -20,7 +20,7 @@ import {
   faUsers,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 
 const SideBar = () => {
   const navigate = useNavigate();

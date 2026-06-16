@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { signOut } from "firebase/auth";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthProvider } from "../../contexts/AuthContext";
+import { AuthProvider } from "../../contexts/AuthProvider";
 import SideBar from "./index";
 
 const mockNavigate = vi.fn();

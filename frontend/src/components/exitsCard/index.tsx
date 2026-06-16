@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import {
@@ -155,7 +155,7 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
       }
   }
 
-  async function loadExits() {
+  const loadExits = useCallback(async () => {
       const user = currentUser ?? auth.currentUser;
       if (!user) return;
 
@@ -196,12 +196,12 @@ export default function ExitsCard({selectedMonth}: ExitCardProps) {
       } finally {
         setLoading(false);
       }
-  }
+  }, [currentUser, selectedMonth]);
 
   useEffect(() => {
     if (!currentUser) return;
-    loadExits();
-  }, [selectedMonth, currentUser]);
+    void loadExits();
+  }, [currentUser, loadExits]);
 
   const defaultExpenseCategories = DEFAULT_CATEGORIES[activePreset].expenses;
 

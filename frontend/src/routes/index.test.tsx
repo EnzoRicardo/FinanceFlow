@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
-import { AuthProvider } from "../contexts/AuthContext";
+import { AuthProvider } from "../contexts/AuthProvider";
 import AppRoutes from "./index";
 
 describe("AppRoutes", () => {
