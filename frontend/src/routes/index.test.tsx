@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
+import { AuthProvider } from "../contexts/AuthContext";
 import AppRoutes from "./index";
 
 describe("AppRoutes", () => {
@@ -24,13 +25,17 @@ describe("AppRoutes", () => {
     expect(screen.getByRole("button", { name: "Criar conta" })).toBeInTheDocument();
   });
 
-  it("renders home page", () => {
+  it("renders home page", async () => {
     render(
       <MemoryRouter initialEntries={["/home"]}>
-        <AppRoutes />
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/Olá,/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Olá,/i)).toBeInTheDocument();
+    });
   });
 });

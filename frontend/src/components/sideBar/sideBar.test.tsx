@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { signOut } from "firebase/auth";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthProvider } from "../../contexts/AuthContext";
 import SideBar from "./index";
 
 const mockNavigate = vi.fn();
@@ -20,13 +21,14 @@ vi.mock("react-router-dom", async () => {
 describe("SideBar", () => {
   beforeEach(() => {
     mockNavigate.mockReset();
-    localStorage.setItem("token", "fake-token");
   });
 
   it("renders menu and user initials", async () => {
     render(
       <MemoryRouter>
-        <SideBar />
+        <AuthProvider>
+          <SideBar />
+        </AuthProvider>
       </MemoryRouter>,
     );
 
@@ -41,7 +43,9 @@ describe("SideBar", () => {
 
     render(
       <MemoryRouter>
-        <SideBar />
+        <AuthProvider>
+          <SideBar />
+        </AuthProvider>
       </MemoryRouter>,
     );
 
@@ -57,7 +61,9 @@ describe("SideBar", () => {
 
     render(
       <MemoryRouter>
-        <SideBar />
+        <AuthProvider>
+          <SideBar />
+        </AuthProvider>
       </MemoryRouter>,
     );
 
@@ -66,7 +72,6 @@ describe("SideBar", () => {
     await waitFor(() => {
       expect(signOut).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith("/login");
-      expect(localStorage.getItem("token")).toBeNull();
     });
   });
 });

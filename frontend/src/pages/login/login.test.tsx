@@ -53,7 +53,6 @@ describe("Login", () => {
     await waitFor(() => {
       expect(signInWithEmailAndPassword).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith("/home");
-      expect(localStorage.getItem("token")).toBe("fake-token");
     });
   });
 

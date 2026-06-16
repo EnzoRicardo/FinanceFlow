@@ -21,6 +21,8 @@ def test_register_success(client, mock_db):
     mock_db.collection.assert_called_with("users")
     mock_db.collection.return_value.document.assert_called_with("user-123")
     mock_db.collection.return_value.document.return_value.set.assert_called_once()
+    saved_data = mock_db.collection.return_value.document.return_value.set.call_args[0][0]
+    assert saved_data["role"] == "user"
 
 
 def test_register_email_already_exists(client):
@@ -59,6 +61,25 @@ def test_register_password_too_short(client):
     assert response.json()["detail"] == (
         "Senha inválida. Deve conter no mínimo 6 caracteres."
     )
+
+
+def test_register_admin_email(client, mock_db, monkeypatch):
+    monkeypatch.setenv("ADMIN_EMAILS", "admin@example.com")
+    user = MagicMock(uid="admin-123")
+
+    with patch("app.routes.auth.firebase_auth.create_user", return_value=user):
+        response = client.post(
+            "/auth/register",
+            json={
+                "name": "Admin",
+                "email": "admin@example.com",
+                "password": "senha123",
+            },
+        )
+
+    assert response.status_code == 200
+    saved_data = mock_db.collection.return_value.document.return_value.set.call_args[0][0]
+    assert saved_data["role"] == "admin"
 
 
 def test_register_generic_error(client):
