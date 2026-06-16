@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import {
@@ -130,7 +130,7 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
     }
   }
 
-  async function loadIncome() {
+  const loadIncome = useCallback(async () => {
     const user = currentUser ?? auth.currentUser;
     if (!user) return;
 
@@ -171,7 +171,7 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [currentUser, selectedMonth]);
 
   async function loadIncomeCategories() {
     const user = auth.currentUser;
@@ -198,7 +198,7 @@ export default function IncomeCard({ selectedMonth }: IncomeCardProps) {
   useEffect(() => {
     if (!currentUser) return;
     void loadIncome();
-  }, [selectedMonth, currentUser]);
+  }, [currentUser, loadIncome]);
 
   const defaultIncomeCategories = DEFAULT_CATEGORIES[activePreset].income;
 

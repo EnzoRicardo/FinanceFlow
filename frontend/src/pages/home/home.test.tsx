@@ -1,18 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
+import { renderWithRouter } from "../../test/test-utils";
 import Home from "./index";
 
 describe("Home", () => {
-  it("renders dashboard sections", () => {
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>,
-    );
+  it("renders dashboard sections", async () => {
+    renderWithRouter(<Home />);
 
-    expect(screen.getByText(/Olá,/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Olá,/i)).toBeInTheDocument();
+    });
+
     expect(screen.getByText("Receita")).toBeInTheDocument();
     expect(screen.getByText("Total")).toBeInTheDocument();
     expect(screen.getByText("Despesas por categoria")).toBeInTheDocument();
@@ -22,11 +21,11 @@ describe("Home", () => {
   it("changes selected month from header", async () => {
     const user = userEvent.setup();
 
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>,
-    );
+    renderWithRouter(<Home />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Olá,/i)).toBeInTheDocument();
+    });
 
     const monthButtons = screen
       .getAllByRole("button")

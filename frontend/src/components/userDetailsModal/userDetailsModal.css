@@ -1,0 +1,257 @@
+.userDetailsOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.userDetailsModal {
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  background-color: #2f2f2f;
+  border-radius: 16px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.userDetailsHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.userDetailsTitle {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+.userDetailsEmail {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userDetailsMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.userDetailsRoleBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.userDetailsRoleBadge.admin {
+  background-color: rgba(129, 199, 132, 0.2);
+  color: #a5d6a7;
+}
+
+.userDetailsRoleBadge.user {
+  background-color: rgba(144, 202, 249, 0.15);
+  color: #90caf9;
+}
+
+.userDetailsCloseButton {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+}
+
+.userDetailsCloseButton:hover {
+  color: #ffffff;
+}
+
+.userDetailsError {
+  margin: 0;
+  padding: 0 28px 12px;
+  color: #ff8a80;
+}
+
+.userDetailsLoading {
+  margin: 0;
+  padding: 0 28px 20px;
+  color: #bbbbbb;
+}
+
+.userDetailsSummary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  padding: 16px 28px;
+}
+
+.userDetailsSummaryCard {
+  background-color: #262626;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.userDetailsSummaryCard strong {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.userDetailsSummaryCard span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.userDetailsTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 28px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.userDetailsTab {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background-color: #3e3e3e;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.userDetailsTab.active {
+  background-color: #747474;
+  color: #ffffff;
+}
+
+.userDetailsContent {
+  padding: 20px 28px 28px;
+  overflow-y: auto;
+  min-height: 280px;
+}
+
+.userDetailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.userDetailsPagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.userDetailsPaginationInfo {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.userDetailsPaginationActions {
+  display: flex;
+  gap: 8px;
+}
+
+.userDetailsPaginationButton {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background-color: #555555;
+  color: #ffffff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.userDetailsPaginationButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.userDetailsPaginationButton:not(:disabled):hover {
+  background-color: #747474;
+}
+
+.userDetailsTableWrapper {
+  overflow-x: auto;
+}
+
+.userDetailsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.userDetailsTable th,
+.userDetailsTable td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.userDetailsTable th {
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+}
+
+.userDetailsEmpty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.userDetailsTypeBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.userDetailsTypeBadge.income {
+  background-color: rgba(129, 199, 132, 0.2);
+  color: #a5d6a7;
+}
+
+.userDetailsTypeBadge.expense {
+  background-color: rgba(239, 83, 80, 0.2);
+  color: #ef9a9a;
+}
+
+@media (max-width: 768px) {
+  .userDetailsOverlay {
+    padding: 10px;
+  }
+
+  .userDetailsModal {
+    max-height: 95vh;
+  }
+
+  .userDetailsHeader,
+  .userDetailsSummary,
+  .userDetailsTabs,
+  .userDetailsContent {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

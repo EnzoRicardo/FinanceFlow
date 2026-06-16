@@ -1,20 +1,24 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, EmailStr
-from firebase_admin import auth as firebase_auth
-from app.core.firebase import get_db
 from datetime import datetime, timezone
-from firebase_admin import auth
-from firebase_admin import exceptions
+
+from fastapi import APIRouter, Depends, HTTPException
+from firebase_admin import auth as firebase_auth
+from pydantic import BaseModel, EmailStr
+
+from app.core.auth import get_current_user, resolve_user_role
+from app.core.firebase import get_db
+from app.schemas.user import CurrentUser, UserRole
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
 
 class RegisterBody(BaseModel):
     name: str
     email: EmailStr
     password: str
 
+
 @router.post("/register")
-def register(body: RegisterBody, db = Depends(get_db)):
+def register(body: RegisterBody, db=Depends(get_db)):
     try:
         user = firebase_auth.create_user(
             email=body.email,
@@ -22,24 +26,33 @@ def register(body: RegisterBody, db = Depends(get_db)):
             display_name=body.name,
         )
 
-        # opcional: salvar perfil no Firestore
+        role = resolve_user_role(body.email, None)
+
         db.collection("users").document(user.uid).set({
             "name": body.name,
             "email": body.email,
-            "createdAt" : datetime.now(timezone.utc).isoformat()
+            "role": role.value,
+            "createdAt": datetime.now(timezone.utc).isoformat(),
         })
 
         return {"uid": user.uid}
     except firebase_auth.EmailAlreadyExistsError:
         raise HTTPException(status_code=400, detail="E-mail já registrado.")
-    
+
     except Exception as e:
         if "PASSWORD_TOO_SHORT" in str(e) or "at least 6 characters" in str(e):
             raise HTTPException(
                 status_code=400,
-                detail="Senha inválida. Deve conter no mínimo 6 caracteres."
+                detail="Senha inválida. Deve conter no mínimo 6 caracteres.",
             )
         raise HTTPException(status_code=400, detail=str(e))
-    
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/me")
+def get_me(current_user: CurrentUser = Depends(get_current_user)):
+    return {
+        "uid": current_user.uid,
+        "email": current_user.email,
+        "name": current_user.name,
+        "role": current_user.role.value,
+    }

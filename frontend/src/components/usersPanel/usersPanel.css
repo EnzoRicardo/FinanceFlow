@@ -1,0 +1,221 @@
+.usersPanel {
+  width: 100%;
+  height: 97vh;
+  background-color: #3e3e3e;
+  border-radius: 15px;
+  padding: 28px;
+  box-sizing: border-box;
+  color: #ffffff;
+  overflow-y: auto;
+}
+
+.usersHeader {
+  margin-bottom: 28px;
+}
+
+.usersTitle {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.usersSubtitle {
+  margin: 10px 0 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.usersError {
+  margin: 12px 0 0;
+  color: #ff8a80;
+}
+
+.usersLoading {
+  margin: 12px 0 0;
+  color: #bbb;
+}
+
+.usersTableWrapper {
+  overflow-x: auto;
+}
+
+.usersTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #2f2f2f;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.usersTable th,
+.usersTable td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.usersTable th {
+  background-color: #262626;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.usersTable tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.usersEmpty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.usersRoleBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.usersRoleBadge.admin {
+  background-color: rgba(129, 199, 132, 0.2);
+  color: #a5d6a7;
+}
+
+.usersRoleBadge.user {
+  background-color: rgba(144, 202, 249, 0.15);
+  color: #90caf9;
+}
+
+.usersActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.usersActionButton {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.usersActionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.usersActionButton.edit {
+  background-color: #747474;
+  color: #ffffff;
+}
+
+.usersActionButton.details {
+  background-color: #555555;
+  color: #ffffff;
+}
+
+.usersActionButton.delete {
+  background-color: rgba(239, 83, 80, 0.2);
+  color: #ef9a9a;
+}
+
+.usersModalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.usersModal {
+  width: 100%;
+  max-width: 420px;
+  background-color: #2f2f2f;
+  border-radius: 14px;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.usersModalTitle {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.usersModalEmail {
+  margin: 8px 0 20px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.95rem;
+}
+
+.usersField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.usersField span {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.usersField input,
+.usersField select {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background-color: #1f1f1f;
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+.usersField input:disabled,
+.usersField select:disabled {
+  opacity: 0.7;
+}
+
+.usersModalHint {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.usersModalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.usersModalButton {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.usersModalButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.usersModalButton.secondary {
+  background-color: #555555;
+  color: #ffffff;
+}
+
+.usersModalButton.primary {
+  background-color: #747474;
+  color: #ffffff;
+}

@@ -1,4 +1,5 @@
 import { Navigate, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute";
 import Login from "../pages/login";
 import CreateAccount from "../pages/createAccount";
 import Home from "../pages/home";
@@ -8,23 +9,80 @@ import GoalsPage from "../pages/goals";
 import BudgetPage from "../pages/budget";
 import ReportsPage from "../pages/reports";
 import AccountsPage from "../pages/accounts";
+import UsersPage from "../pages/users";
 
 export default function AppRoutes() {
-    return (
-        <Routes>
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<CreateAccount />} />
 
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<Navigate to="/login" />} />
-            <Route path="/register" element={<CreateAccount />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/categories" element={<CategoriesPage />} />
-            <Route path="/statement" element={<StatementPage />} />
-            <Route path="/goals" element={<GoalsPage />} />
-            <Route path="/budget" element={<BudgetPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/accounts" element={<AccountsPage />} />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categories"
+        element={
+          <ProtectedRoute>
+            <CategoriesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/statement"
+        element={
+          <ProtectedRoute>
+            <StatementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/goals"
+        element={
+          <ProtectedRoute>
+            <GoalsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/budget"
+        element={
+          <ProtectedRoute>
+            <BudgetPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <ReportsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts"
+        element={
+          <ProtectedRoute>
+            <AccountsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <UsersPage />
+          </ProtectedRoute>
+        }
+      />
 
-
-        </Routes>
-    )
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
 }

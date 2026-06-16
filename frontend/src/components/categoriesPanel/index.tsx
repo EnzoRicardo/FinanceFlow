@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "../../services/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import {
@@ -95,7 +95,7 @@ export default function CategoriesPanel() {
     }
   }
 
-  async function loadCategories() {
+  const loadCategories = useCallback(async () => {
     const user = currentUser ?? auth.currentUser;
     if (!user) return;
 
@@ -122,7 +122,7 @@ export default function CategoriesPanel() {
     });
 
     setCategories(loaded.filter((category) => category.name.length > 0));
-  }
+  }, [currentUser]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -147,7 +147,7 @@ export default function CategoriesPanel() {
     }
 
     void initCategoriesPanel(currentUser);
-  }, [currentUser]);
+  }, [currentUser, loadCategories]);
 
   async function addCategory(type: CategoryType) {
     if (addingType) return;

@@ -24,9 +24,6 @@ export default function Login() {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            const token = await user.getIdToken();
-
-            localStorage.setItem("token", token);
 
             console.log("Usuário logado:", user);
 

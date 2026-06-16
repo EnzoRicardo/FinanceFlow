@@ -33,3 +33,13 @@ def client(mock_db):
     app.dependency_overrides[get_db] = lambda: mock_db
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def auth_client(mock_db):
+    from app.core.firebase import get_db
+    from app.main import app
+
+    app.dependency_overrides[get_db] = lambda: mock_db
+    yield TestClient(app)
+    app.dependency_overrides.clear()

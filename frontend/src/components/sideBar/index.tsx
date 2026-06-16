@@ -17,11 +17,14 @@ import {
   faCalendarAlt,
   faWallet,
   faTags,
+  faUsers,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../hooks/useAuth";
 
 const SideBar = () => {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [user, setUser] = useState<User | null>(auth.currentUser);
   const [userPhoto, setUserPhoto] = useState<string | null>(
     auth.currentUser?.photoURL ?? null,
@@ -62,7 +65,6 @@ const SideBar = () => {
     setLoggingOut(true);
     try {
       await signOut(auth);
-      localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
@@ -175,6 +177,13 @@ const SideBar = () => {
               <FontAwesomeIcon icon={faTags} />
               <span>Categorias</span>
             </li>
+
+            {isAdmin && (
+              <li onClick={() => handleGo("/users")}>
+                <FontAwesomeIcon icon={faUsers} />
+                <span>Usuários</span>
+              </li>
+            )}
 
             <div className="divider" />
 
