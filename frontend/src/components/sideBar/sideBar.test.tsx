@@ -1,9 +1,8 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { signOut } from "firebase/auth";
-import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthProvider } from "../../contexts/AuthProvider";
+import { renderWithRouter } from "../../test/test-utils";
 import SideBar from "./index";
 
 const mockNavigate = vi.fn();
@@ -24,13 +23,7 @@ describe("SideBar", () => {
   });
 
   it("renders menu and user initials", async () => {
-    render(
-      <MemoryRouter>
-        <AuthProvider>
-          <SideBar />
-        </AuthProvider>
-      </MemoryRouter>,
-    );
+    renderWithRouter(<SideBar />);
 
     await waitFor(() => {
       expect(screen.getByText("Dashboard")).toBeInTheDocument();
@@ -41,13 +34,7 @@ describe("SideBar", () => {
   it("navigates through menu items", async () => {
     const user = userEvent.setup();
 
-    render(
-      <MemoryRouter>
-        <AuthProvider>
-          <SideBar />
-        </AuthProvider>
-      </MemoryRouter>,
-    );
+    renderWithRouter(<SideBar />);
 
     await user.click(screen.getByText("Extrato"));
     await user.click(screen.getByText("Categorias"));
@@ -59,13 +46,7 @@ describe("SideBar", () => {
   it("logs out and redirects to login", async () => {
     const user = userEvent.setup();
 
-    render(
-      <MemoryRouter>
-        <AuthProvider>
-          <SideBar />
-        </AuthProvider>
-      </MemoryRouter>,
-    );
+    renderWithRouter(<SideBar />);
 
     await user.click(screen.getByText("Sair"));
 
